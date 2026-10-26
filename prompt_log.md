@@ -2,21 +2,21 @@
 
 ## Tools and models
 
-- **Claude (Anthropic, Opus 5.5), in the Claude app.** Used for the whole development process: reading the assignment, choosing an idea, writing and debugging the code, checking results, and drafting the README. I used it for everything because the Claude app could work directly in my repo folder on my Mac and read the outputs and session logs my runs produced, so it could check real results instead of guessing.
+- **Claude (Anthropic, Opus 5.5), in the Claude app.** Used for the development process: developing an idea, writing and debugging the code, and checking results.
 - **`openai/gpt-oss-20b` via Groq.** Not a development tool: this is the model *inside* the app that writes explanations from retrieved passages. I already had a Groq key from HW4 and Project 2.
 
 **How the work was split:** I chose the direction and the data, made the decisions, ran every script in Terminal on my Mac (Claude's environment couldn't reach Wikipedia, the embedding model download or Groq), tested the app and reported what I saw. Claude wrote most of the code and analysed the outputs with me.
 
-**Time:** four working sessions, about 5 hours in total. The timestamps below are from the conversation.
+**Time:** about 5 hours in total. The timestamps below are from the conversation.
 
 ---
 
 ## Session 1: Understanding the assignment (Fri Oct 23, ~10:30)
 
-> **Prompt:** Translate this and talk about possible project directions:
-> *[pasted the full HW6 assignment]*
+> **Prompt:** Talk about possible project directions:
+> *[pasted the topics for HW6 assignment]*
 
-Claude summarized the requirements and pointed out that the grade mostly depends on (1) two queries that prove meaning-based search is needed and (2) doing something useful with the results (Step 7). It suggested five directions: a design precedent finder, a Pittsburgh "vibe" place finder, a movie "feeling" recommender, a board game recommender, and a design process journal.
+Claude suggested five directions: a design precedent finder, a Pittsburgh "vibe" place finder, a movie "feeling" recommender, a board game recommender, and a design process journal.
 
 ---
 
@@ -40,8 +40,8 @@ Claude checked possible sources: AskNature (good structure, no bulk download), M
 
 Decided: **Designer Lens**, a library of designers I like, where adding a designer, a note or an idea always triggers a search.
 
-> **Prompt:** I don't want your designer list. I have my own:
-> *[attached my spreadsheet: 210 designers and studios, Chinese and English names, compiled from 18 screenshots]*
+> **Prompt:** I have my own designer list:
+> *[attached my spreadsheet: 210 designers and studios, Chinese and English names]*
 
 Claude went through the list: mostly architects, plus about 30 interior and 30 graphic designers. Findings: (1) 20+ person/studio duplicates (Koolhaas/OMA, Aravena/ELEMENTAL …), (2) ambiguous English names (Wang Hui, Huang Hai, BIG …), (3) probably no English Wikipedia article for many Chinese interior designers. It asked whether to use English only, or Chinese + English with a multilingual embedding model.
 
@@ -49,7 +49,7 @@ Claude went through the list: mostly architects, plus about 30 interior and 30 g
 
 Claude built `designers.csv` (29 merges → 181 designers, discipline, Wikipedia title, notes on uncertain rows) and `fetch_wikipedia.py`, which downloads each article, rejects pages whose introduction doesn't sound like a designer, and writes `coverage.csv`.
 
-> **Prompt:** Can you just build it for me?
+> **Prompt:** Walk me through every step.
 
 I connected my Documents folder so Claude could create the repo folder and write files there directly. Claude's environment couldn't reach Wikipedia, so I ran the fetch script in Terminal.
 
@@ -80,7 +80,7 @@ Fixes: reject disambiguation pages; fall back to Wikipedia search; re-check cach
 
 **The app (Steps 6–8):** Claude wrote `app.py` with Groq for explanations, using the same key setup as HW4.
 
-> **Prompt:** Give me a set of test inputs I can copy and paste directly.
+> **Prompt:** Give me a set of test inputs.
 
 Claude gave me 10 tests (both test queries, a discipline filter, a nonsense query, adding a new designer, aliases, a note, two similar ideas, restarting).
 
@@ -88,7 +88,7 @@ Claude gave me 10 tests (both test queries, a discipline filter, a nonsense quer
 
 Claude couldn't see my Terminal, so it checked the database (Noguchi added with 28 chunks; the note and ideas survived a restart). The OMA bug: the name in the list was "OMA — Office for Metropolitan Architecture", so plain "OMA" didn't match. Fix: an `aliases` column taken from my original spreadsheet (OMA, BIG, SOM, KPF, Art Gensler …). Claude also added **session logs** so it could read my results directly.
 
-> **Prompt:** This is just the output from last time:
+> **Prompt:** This is the outputs from last time, check if anything is wrong:
 > *[pasted the full Terminal output of the tests]*
 
 Problems found in real output:
@@ -98,7 +98,7 @@ Problems found in real output:
 4. My test idea got "strong" labels next to unrelated work → removed the labels and used stricter idea thresholds.
 5. No way to remove test data → added "Delete one of my notes or ideas".
 
-*[pasted the output of the re-test]*
+*[pasted the outputs of the re-test]*
 
 Both test queries now gave short, honest briefs. Two more fixes:
 - Two unrelated ideas (a flower ceiling and wooden rods) triggered "close to an idea you saved before" at 1.05, while the same idea reworded was 0.81 → threshold 0.90.
@@ -108,19 +108,17 @@ Both test queries now gave short, honest briefs. Two more fixes:
 
 Prouvé → Le Corbusier at 0.707, and the article mentions Le Corbusier, Perriand, Rogers and Piano ✓. But the staircase-bookshelf idea was labelled "fresh territory" while the model correctly pointed out Heatherwick's Vessel (a network of staircases). The distance (1.22) was *higher* than an unrelated match for another idea (1.16). **Distance alone can't judge overlap**, so the model now gives the verdict from the content, and distance is only a fallback without a model.
 
-> **Prompt:** Don't I need to build a front end?
+> **Prompt:** Do I need to build a front end?
 
 Not required: the assignment says a CLI is enough for full credit. A local web UI might help my portfolio later, but first I'm finishing the required parts (README, prompt log, video).
-
-> **Prompt:** You write the README and prompt log, and I'll check them. And give me the test script for recording the video.
 
 ---
 
 ## Session 4: Recording the demo (Mon Oct 26, ~00:15)
 
-> **Prompt:** I finished recording. Check it.
+> **Prompt:** Check the test inputs before I record.
 
-Claude read the session log from the recording. Everything required worked: the kitchen-towel test query found Shigeru Ban, Eileen Gray was added (24 chunks) and her article's mention of Le Corbusier was picked up, and a new note was found right away by a question phrased differently. One weak spot: for "making people walk more slowly so they notice the view", only my own note was shown, so the brief had no designer to talk about. Short notes score closer than long Wikipedia passages (1.00 vs 1.21), and the 0.08 band was measured from the note. Fix: notes and Wikipedia passages are now filtered separately, and the model is told to call my notes "your note". The session log was also fixed to record the menu prompts, not just my answers.
+Everything required worked: the kitchen-towel test query found Shigeru Ban, Eileen Gray was added (24 chunks) and her article's mention of Le Corbusier was picked up, and a new note was found right away by a question phrased differently. One weak spot: for "making people walk more slowly so they notice the view", only my own note was shown, so the brief had no designer to talk about. Short notes score closer than long Wikipedia passages (1.00 vs 1.21), and the 0.08 band was measured from the note. Fix: notes and Wikipedia passages are now filtered separately, and the model is told to call my notes "your note". The session log was also fixed to record the menu prompts, not just my answers.
 
 ---
 
