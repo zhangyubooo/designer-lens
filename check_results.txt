@@ -1,0 +1,52 @@
+=== a place for kids, shaped from dirt by neighbours, with nothing from a factory
+  1.319  Herzog & de Meuron  [Selected projects]
+  1.355  Jean Nouvel  [Projects > Under construction]
+  1.361  Anna Heringer  [Projects]
+  FAIL: anna-heringer at rank 3, distance 1.361, shared words: none
+  found: DESI, a vocational school for electricians, is powered by solar energy but as it is the first mud-built structure in Bangladesh to have indoor plumbing. An extension of the METI project, it called on the services of loca
+
+=== dirt raised into rooms by villagers' bare hands
+  1.284  Anna Heringer  [Projects]
+  1.298  Anna Heringer  [Projects]
+  1.325  Xu Tiantian  [Career and design approach]
+  PASS: anna-heringer at rank 1, distance 1.284, shared words: none
+  found: DESI, a vocational school for electricians, is powered by solar energy but as it is the first mud-built structure in Bangladesh to have indoor plumbing. An extension of the METI project, it called on the services of loca
+
+=== a tiny drawing of an organ replacing a verb in a catchphrase for visitors
+  1.346  Pentagram  [History > This Is Tomorrow]
+  1.409  Frank Gehry  [Academia and design career > Other desig]
+  1.434  Stefan Sagmeister  [Works and projects > Sagmeister & Walsh:]
+  FAIL: milton-glaser not in the top 10
+
+=== the doodle that made a bankrupt metropolis lovable again
+  1.239  Le Corbusier  [Criticism]
+  1.289  David Chipperfield  [Style and philosophy]
+  1.339  Rem Koolhaas  [Architectural theory > Project on the ci]
+  FAIL: milton-glaser not in the top 10
+
+=== somewhere for displaced people to live, built from the stuff inside a roll of kitchen towel
+  1.217  Shigeru Ban  [Design approach]
+  1.246  Anna Heringer  [Projects]
+  1.273  Diébédo Francis Kéré  [Career > Architecture and design project]
+  PASS: shigeru-ban at rank 1, distance 1.217, shared words: none
+  found: Ban is most famous now for his innovative work with paper and cardboard tubing as a building material. He was the first architect in Japan to construct a building primarily out of paper with his paper house, and required
+
+=== emergency rooms made from rolled-up packaging after the ground shook
+  1.324  I. M. Pei  [Career > Kennedy Library]
+  1.325  Shigeru Ban  [Use of paper as a building material]
+  1.376  Thomas Heatherwick  [Selected works > Coal Drops Yard]
+  FAIL: shigeru-ban at rank 2, distance 1.325, shared words: none
+  found: Ban's paper tube shelter design from Rwanda's Byumba Refugee Camp was featured in a PBS NewsHour story. In 1995, the magnitude 7.2 Great Hanshin earthquake devastated Kobe, Japan, which offered a reconstruction project t
+
+=== apartments stacked like a wrung-out cloth
+  1.109  Le Corbusier  [Projects (1928–1963) > World War II and ]
+  1.156  Le Corbusier  [L'Esprit Nouveau Pavilion (1925)]
+  1.201  Li Xinggang  [Major works > The "Third Space" in Tangs]
+  FAIL: santiago-calatrava not in the top 10
+
+=== a tower of flats that corkscrews toward the sky
+  1.214  Zaha Hadid  [Posthumous projects (2016–present) > Sky]
+  1.229  Antoni Gaudí  [Works > Naturalist period > 1904]
+  1.244  Zaha Hadid  [Posthumous projects (2016–present) > Sky]
+  FAIL: santiago-calatrava at rank 4, distance 1.268, shared words: none
+  found: Calatrava designed the WTC Transportation Hub in New York City at the rebuilt World Trade Center at the site of the September 11 attacks in 2001. The new station connects the regional trains of the new PATH with the subw

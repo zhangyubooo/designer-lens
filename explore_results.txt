@@ -1,0 +1,64 @@
+Collection holds 2154 chunks
+
+Raw result object for the first query, n_results=2:
+{'ids': [['anna-heringer-005', 'anna-heringer-004']], 'metadatas': [[{'discipline': 'architecture', 'url': 'https://en.wikipedia.org/wiki/Anna_Heringer', 'source': 'wikipedia', 'name_zh': '安娜·赫林格', 'name_en': 'Anna Heringer', 'section': 'Projects', 'designer_id': 'anna-heringer'}, {'source': 'wikipedia', 'section': 'Projects', 'url': 'https://en.wikipedia.org/wiki/Anna_Heringer', 'name_en': 'Anna Heringer', 'discipline': 'architecture', 'name_zh': '安娜·赫林格', 'designer_id': 'anna-heringer'}]], 'distances': [[1.2304482460021973, 1.2534396648406982]]}
+
+=== construction using dirt and the labour of neighbours instead of factory materials
+  1.230  Anna Heringer              [Projects]
+         DESI, a vocational school for electricians, is powered by solar energy but as it is the first mud-built structure in Bangladesh to have indoor plumbin
+  1.253  Anna Heringer              [Projects]
+         Through her projects, Heringer has sought to give local craftsmen and the local community confidence in their use of traditional building methods, pre
+  1.334  Kengo Kuma                 [Philosophy and writing > Mat]
+         When dealing with stone work, for example, Kuma displays a different character from the preexisting buildings of solid, heavy, traditional masonry con
+  1.337  Zhang Jinqiu               [Design Work]
+         Zhang also insists on leaving historical traces and cultural charm in architectural design and treats historical and cultural heritage with heart and 
+  1.360  Shigeru Ban                [Use of paper as a building m]
+         Limited material availability during times of disaster relief reconstruction is a major concern and involves increased market prices. Paper tubing on 
+
+=== somewhere to sleep for people right after their town was flattened
+  1.352  Jørn Utzon                 [Later life]
+         Although Utzon and his wife spent an increasing amount of time on Mallorca, they became disturbed by all the tourists who came to see their home. They
+  1.374  Le Corbusier               [Criticism]
+         Later criticism of Le Corbusier was directed at his ideas on urban planning. In 1998, the architectural historian Witold Rybczynski wrote in Time maga
+  1.388  Sumayya Vally              [Notable works > Serpentine P]
+         With this commission, Vally set out to create a representation of her ethos and practice by folding other voices into the pavilion. The Pavilion's des
+  1.390  William Morris             [Career and fame > Kelmscott ]
+         1870–1875: By early summer 1871, Morris began to search for a house outside London where his children could spend time away from the city's pollution.
+  1.390  Li Xinggang                [Major works > The "Third Spa]
+         This is an assemblage of twin towers comprising 76 garden houses with multi-level interiors stacked vertically atop a public commercial space. The myr
+
+=== a very tall residential block that spirals as it goes up
+  1.135  Kohn Pedersen Fox          [History > Expanded national ]
+         Also in New York, KPF is leading the redevelopment of New York City Housing Authority's (NYCHA) Red Hook Houses, which suffered severe flooding and wi
+  1.193  Liu Yichun                 [Works]
+         Liu is excellent in interconnecting context with the building and creating continuously changing physical experience. In his Spiral Gallery in Jiading
+  1.315  Adrian Smith               [Contributions to architectur]
+         The petal shape of the Burj Khalifa was a major architectural contribution by Smith. The shape of the Burj Khalifa was inspired by the spider lily flo
+  1.338  Kenzo Tange                [Selected projects > Town Hal]
+         Set in an open square, the building sits on massive columns that taper inwards as they rise. The elevation consists of horizontal planks (some of whic
+  1.339  Shigeru Ban                [Nepal Project]
+         In July 2015, Ban began a project to rebuild homes for the victims of that year's Nepal earthquake. The structures of the homes are wood framed for fl
+
+=== a heart symbol standing in for a word in a city slogan
+  1.216  Milton Glaser              [Works > I Love New York logo]
+         One of Glaser's most recognizable works is his I Love New York logo. In the mid-1970s, New York City's crime rate was up and the city was widely perce
+  1.238  Milton Glaser              [Works > I Love New York logo]
+         After the September 11 attacks, the logo became even more of a symbol, creating unity between the public. Glaser designed a modified version saying, "
+  1.314  Paula Scher                [Branding and identity system]
+         Scher used the typeface New Rail Alphabet, designed by Margaret Calvert, for its neutral appearance, but replaced its square-edged punctuation with ro
+  1.318  Milton Glaser              [Works > I Love New York logo]
+         "Glaser loved New York so much that he gave his work to the city for free, hoping it would become public property." The logo earns New York state $30 
+  1.341  Paula Scher                [Branding and identity system]
+         The new identity and graphics appeared on bus shelter, subway poster, magazines and newspapers ads, in the company's programs and website, and in envi
+
+=== how do I fix a flat bicycle tire
+  1.697  Moshe Safdie               [Early life and education]
+         Safdie was born in the city of Haifa, Mandatory Palestine, to a family of Syrian Jews. His father was from Aleppo, and his mother, whose family had it
+  1.705  Zaha Hadid                 [Major projects (2006–2010) >]
+         Between 1997 and 2010, she constructed a much more ambitious bridge, the Sheikh Zayed Bridge, which honors Sheikh Zayed bin Sultan Al Nahyan, between 
+  1.724  David Carson               [Career]
+         Carson was a professional surfer before finding employment with Self and Musician magazine. He then worked at Transworld Skateboarding for four years.
+  1.728  Moshe Safdie               [Career > Jerusalem and Israe]
+         In 1970, Safdie established a branch office of his practice in Jerusalem. During this period, Safdie combined his interests in social activism and adv
+  1.747  William Morris             [Career and fame > Textile ex]
+         1875–1880: However, his discontent with the British liberal movement grew following the election of the Liberal Party's William Ewart Gladstone to the

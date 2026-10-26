@@ -1,0 +1,4 @@
+wikipedia-api
+chromadb
+groq
+python-dotenv

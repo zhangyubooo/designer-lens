@@ -1,0 +1,15 @@
+# raw Wikipedia cache and the vector database are rebuilt on first run
+data/
+chroma_store/
+
+# API keys
+.env
+
+__pycache__/
+.venv/
+
+# session transcripts (may contain personal notes)
+logs/
+
+# macOS
+.DS_Store
