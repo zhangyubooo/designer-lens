@@ -51,7 +51,7 @@ Claude built `designers.csv` (29 merges → 181 designers, discipline, Wikipedia
 
 > **Prompt:** Walk me through every step.
 
-I connected my Documents folder so Claude could create the repo folder and write files there directly. Claude's environment couldn't reach Wikipedia, so I ran the fetch script in Terminal.
+Claude explained every step, and started writing files in the repo folder I created. Claude's environment couldn't reach Wikipedia, so I ran the fetch script in Terminal.
 
 **First real run:** 120 found, 12 "suspect", 49 missing. The suspect check worked: all 12 were different people with the same name (an actress for 徐晶磊, a Go player for 谢柯, a badminton player, and the Yellow Sea for 黄海). But reading through the "found" ones, Claude spotted **4 wrong matches that had passed**: two disambiguation pages (Wu Bin, Qi Kang), URBANUS matched to a "Wang Hui" disambiguation page, and William Lim matched to a different architect in Singapore.
 
