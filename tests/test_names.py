@@ -55,6 +55,13 @@ def test_slug_of_nothing_usable_is_unnamed():
     assert slug("!!!") == "unnamed"
 
 
+def test_different_chinese_names_get_different_ids():
+    # A designer can be added by typing a Chinese name that is not in
+    # designers.csv. The slug becomes their id in the database, so two
+    # different people must not end up with the same id.
+    assert slug("王澍") != slug("刘家琨")
+
+
 def test_slug_reproduces_every_id_in_designers_csv():
     # The ids in designers.csv were made from the English names. If slug
     # changed, a re-added designer would get a new id and be stored twice.
