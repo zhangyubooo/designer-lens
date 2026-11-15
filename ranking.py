@@ -59,7 +59,7 @@ def pick_for_question(ranked):
         # rooms", because his excerpt mentioned building workers).
         best = published[0]["score"]
         published = [r for r in published if r["score"] < RELATED
-                     and r["score"] <= best + CLOSE_BAND][:4]
+                     and r["score"] < best + CLOSE_BAND][:4]
     own = [r for r in own if r["score"] < RELATED][:2]
     ranked = sorted(published + own, key=lambda r: r["score"])
     return ranked
