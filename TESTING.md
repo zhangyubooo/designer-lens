@@ -168,7 +168,7 @@ Both ended with "I haven't committed" the change.
 
 ## 8. How I used AI
 
-- **Claude (Anthropic), Opus 5.5, in the Claude app**, conversation of Nov 14–15, 2026. Translated the assignment into Chinese, compared my projects (Project 2, HW6, HW7, HW8) and recommended HW6, wrote the refactor and the side-by-side check, wrote all the tests, ran the 12 break-it changes at my request, wrote the CI workflow, looked up the CI runs through GitHub's API, read the agents' changes and transcripts, and drafted this file and the prompt-log section. It told me what each file contains before I committed it.
+- **Claude (Anthropic), Opus 5.5, in the Claude app**, conversation of Nov 14–15, 2026. Compared my projects (Project 2, HW6, HW7, HW8) and recommended HW6, wrote the refactor and the side-by-side check, wrote all the tests, ran the 12 break-it changes at my request, wrote the CI workflow, looked up the CI runs through GitHub's API, read the agents' changes and transcripts.
 - **Claude Code, with Sonnet 5.5 and Haiku 5.5:** used only as the two agents in the verifier experiment.
 - **My part:** I chose HW6, confirmed the five things to test, told the AI not to fix bugs during the refactor, ran the app after the refactor, made every commit myself in GitHub Desktop (one step per commit), created the branches, and ran both verifier sessions.
 - An honest note on Step 3: the first deliberate failure happened in Claude's sandbox (the `max_words=10` test in section 5) and in CI. On my Mac, pytest was first installed by the agent in verifier run 1; after that I ran `pytest` on my Mac myself and also broke a test on purpose to see it fail.
