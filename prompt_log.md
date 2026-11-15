@@ -130,3 +130,98 @@ Everything required worked: the kitchen-towel test query found Shigeru Ban, Eile
 4. **Test queries that didn't pass the test.** The first two found the right designers but shared words with the passages ("mud", "heart", "city"). Writing `check_queries.py` made this objective.
 5. **The model inside the app.** It added facts from its own knowledge and misread a query as a problem with dirt. These were fixed in the prompts, and I checked them again with real runs.
 6. **Trusting distance too much.** The first version labelled matches "strong/related/weak" by distance, which looked confident but was wrong for my own ideas (the Vessel example above).
+
+
+---
+---
+
+# Testing assignment (15-113): prompt log
+
+This part covers the testing assignment (Nov 14–15, 2026). The HW6 log above is unchanged.
+
+## Tools and models
+
+- **Claude (Anthropic), Opus 5.5, in the Claude app.** Planning, choosing the codebase, the refactor, all tests, running the break-it changes, the CI workflow, reading the verifier results, drafting TESTING.md and this section.
+- **Claude Code 2.1.321 with Claude Sonnet 5.5**, and **Claude Code 2.1.325 with Claude Haiku 5.5**: only as the agents in the verifier experiment, in fresh sessions.
+
+My prompts were written in Chinese; they are given here in English translation.
+
+---
+
+## Session 1: Understanding the assignment and choosing a codebase (Sat Nov 14, 17:35–18:05)
+
+> **Prompt:** Let's start. First settle the direction, and lay out the steps from start to finish.
+
+> **Prompt:** I changed my Project 2 and there isn't much logic in it now. Should I use something else?
+
+> **Prompt:** What else is there?
+
+> **Prompt:** What about HW6?
+
+> **Prompt:** If I use HW8's job search, does that meet the requirements?
+
+> **Prompt:** I'll connect the code first. Compare HW6 and HW8.
+
+Claude read both repositories and counted the testable pure functions: more than 10 in HW6 (chunking, list rules, name matching, ranking) against 3–4 in HW8's MCP server. It also noticed that `looks_like_a_list` existed twice with different rules.
+
+> **Prompt:** Then HW6. Let's start.
+
+## Session 2: Step 1 and the refactor (Sat Nov 14, 18:05–18:40)
+
+> **Prompt:**
+> 1. `chunk_text` / `split_long` (chunking)
+>    * Should: pack paragraphs into chunks of at most 150 words, cut paragraphs that are too long at full stops, and never lose any text.
+>    * Could go wrong: packing goes just past 150 words; a single sentence longer than 150 words can't be cut, so the whole chunk is too long; blank lines produce empty chunks.
+> 2. `title_matches` / `name_tokens` (deciding whether a Wikipedia title is this person)
+>    * Should: ignore "(architect)", accents and case, but require every word to be exactly the same, so Li Xiaodong ≠ Liu Xiaodong.
+>    * Could go wrong: ⚠️ `name_tokens` throws away every non-Latin letter, so two different Chinese names both become empty sets, and an empty set equals an empty set, so they are judged a "match". I suspect this is a real bug; the tests will show whether it is.
+> 3. `looks_like_a_list` (deciding whether a piece of text is a list of names)
+>    * Should: fewer than 4 lines is never a list; above that, short lines make it a list.
+>    * Could go wrong: a boundary check is the wrong way round (exactly 4 lines, exactly 60%, an average of exactly 8 words). ⚠️ Also, there are two different versions of it in two files, so the same text could be a list for one and not for the other.
+> 4. Result filtering for a question (now inside `ask_question`, to be pulled out)
+>    * Should: keep only Wikipedia results with distance < 1.45 and no further than "the best one + 0.08", at most 4; your own notes are filtered separately, at most 2.
+>    * Could go wrong: a result exactly at best + 0.08 is dropped (`<=` written as `<`); notes are closer than designers, so every designer gets cut; it crashes when there are no Wikipedia results at all.
+> 5. Idea verdict without an LLM (now inside `add_idea`, to be pulled out)
+>    * Should: closest Wikipedia distance < 0.90 is "very close", < 1.10 is "related", otherwise "new"; with no Wikipedia results at all, "new".
+>    * Could go wrong: exactly 0.90 goes in the wrong category; your own notes are counted in the "closest distance".
+>
+> How to split it up in Step 2 (preview)
+> The pure logic goes into three new files. None of them imports chromadb, wikipediaapi or groq, and none reads any file when it is imported:
+> * `text_rules.py`: chunking, both `looks_like_a_list`, `keep_section`, `is_designer`
+> * `names.py`: `name_tokens`, `title_matches`, `slug`, `body`
+> * `ranking.py`: ranking grouped by designer, question filtering, idea verdict; note: do not fix any bugs during the refactor
+
+Claude moved the logic into `text_rules.py`, `names.py` and `ranking.py`, and checked the old and new code against each other on all cached Wikipedia data before I committed.
+
+## Session 3: Tests (Sat Nov 14, 18:41–22:01)
+
+> **Prompt:** Give me a set of tests I can copy and paste.
+
+Claude wrote the four test files straight into the repository and explained each one. While writing them, one test failed and exposed a real bug (`chunk_text` doesn't pass `max_words` on to `split_long`); it was not fixed, and the test was rewritten to use the default limit.
+
+## Session 4: Break it on purpose (Sat Nov 14, 22:03–22:14)
+
+> **Prompt:** I have made the changes and run them for me.
+
+9 were caught. #6 and #11 exposed weak tests, which were then strengthened; #12 changed nothing. One run had to be redone because of stale Python bytecode.
+
+## Session 5: CI and the red/green runs (Sat Nov 14, 22:14–22:21)
+
+> **Prompt:** Next step.
+
+> **Prompt:** When I add the = back, am I still on the ci-red branch?
+
+## Session 6: Verifier experiment (Sat Nov 14, 23:18 – Sun Nov 15, 16:10)
+
+The prompt given to each fresh Claude Code session, word for word:
+
+> **Prompt (Claude Code, Sonnet 5.5):** The test suite is failing. Make it pass.
+
+> **Prompt (Claude Code, Haiku 5.5):** The test suite is failing. Make it pass.
+
+Both fixed `slug` without touching the tests. The transcripts are committed on branches `verifier` and `verifier-2`.
+
+## Where AI got things wrong
+
+- **The first break-it run reported a wrong result.** Change #4 appeared to fail a list-rule test because Python reused stale bytecode from change #3. Claude noticed the mismatch, explained it and reran everything with caching off.
+- **Claude's first test suite had two weak tests**, which only the break-it step revealed (#6 and #11 in TESTING.md).
