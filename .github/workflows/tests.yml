@@ -1,0 +1,18 @@
+name: tests
+
+on: [push, pull_request]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-python@v7
+        with:
+          python-version: "3.13"
+      # Only pytest: the tested modules (text_rules, names, ranking) import
+      # nothing outside the standard library. chromadb, wikipedia-api and groq
+      # are deliberately NOT installed, so if a tested module ever starts
+      # importing them, CI fails instead of quietly downloading them.
+      - run: pip install pytest
+      - run: pytest -v
