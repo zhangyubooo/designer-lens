@@ -44,6 +44,14 @@ def test_a_designer_with_many_chunks_appears_once_with_its_best_score():
     assert ranked[0]["score"] == 1.10
 
 
+def test_each_designer_keeps_its_two_best_chunks_in_order():
+    # app.excerpts() sends up to 2 passages per designer to the language model.
+    # (Added after break-it #11: keeping only 1 passage passed every test.)
+    res = query_result([("scher", 1.30), ("scher", 1.10), ("scher", 1.20)])
+    hits = rank_by_designer(["q"], res)[0]["hits"]
+    assert [h[0] for h in hits] == [1.10, 1.20]
+
+
 def test_ranking_is_sorted_closest_first_and_cut_to_top():
     res = query_result([("a", 1.4), ("b", 1.1), ("c", 1.3), ("d", 1.2)])
     assert ids(rank_by_designer(["q"], res, top=3)) == ["b", "d", "c"]

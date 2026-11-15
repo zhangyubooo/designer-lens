@@ -105,7 +105,11 @@ def test_designer_intro_is_recognised():
 
 
 def test_disambiguation_page_is_rejected_even_with_design_words():
+    # Wikipedia words these pages two ways; both must be rejected.
+    # (The second assert was added after break-it #6: deleting the
+    # "is the name of" check passed every test.)
     assert is_designer("Wu Bin may refer to: Wu Bin (painter), Wu Bin (architect)") is False
+    assert is_designer("Wang Hui is the name of several people, including an architect.") is False
 
 
 def test_intro_about_someone_else_is_rejected():
