@@ -20,6 +20,11 @@ import unicodedata
 
 import wikipediaapi
 
+from names import title_matches
+# This file had its own looks_like_a_list, different from build_db.py's.
+# Both moved to text_rules.py unchanged; this one is looks_like_a_list_avg.
+from text_rules import is_designer, looks_like_a_list_avg as looks_like_a_list
+
 CSV_PATH = "designers.csv"
 RAW_DIR = os.path.join("data", "raw")
 COVERAGE_PATH = "coverage.csv"
@@ -33,12 +38,6 @@ SKIP_TITLES = {
     "see also", "external links", "further reading", "bibliography",
     "publications", "filmography", "gallery",
 }
-
-# If the intro mentions none of these, we probably matched a different person.
-DESIGN_WORDS = (
-    "architect", "design", "artist", "typeface", "typograph",
-    "interior", "studio", "firm", "practice", "fashion", "painter",
-)
 
 # Extra word added to a Wikipedia search so 'Huang Hai' finds the designer,
 # not the Yellow Sea.
@@ -68,16 +67,6 @@ def load_designers():
     return entities, aliases
 
 
-def looks_like_a_list(text):
-    """Sections like 'Works' are often just one building name per line.
-    Those give the embedding model almost nothing to work with."""
-    lines = [ln for ln in text.splitlines() if ln.strip()]
-    if len(lines) < 4:
-        return False
-    avg_words = sum(len(ln.split()) for ln in lines) / len(lines)
-    return avg_words < 8
-
-
 def collect_sections(sections, path=""):
     """Walk the nested section tree and keep sections with real prose."""
     kept = []
@@ -90,29 +79,6 @@ def collect_sections(sections, path=""):
             kept.append({"section": title, "text": text})
         kept.extend(collect_sections(s.sections, title))
     return kept
-
-
-def is_designer(intro):
-    """Does this intro describe a designer? Disambiguation pages ('Wu Bin may
-    refer to: ... a painter ...') mention design words too, so reject them."""
-    text = intro.lower()
-    if "may refer to" in text or "is the name of" in text:
-        return False
-    return any(word in text for word in DESIGN_WORDS)
-
-
-def name_tokens(text):
-    """'Álvaro Siza' -> {'alvaro', 'siza'} (accents removed, lowercase)."""
-    plain = unicodedata.normalize("NFKD", text).encode("ascii", "ignore").decode()
-    return set(re.findall(r"[a-z0-9]+", plain.lower()))
-
-
-def title_matches(title, name):
-    """'Qi Kang (architect)' matches 'Qi Kang'. The words must be exactly the
-    same, so 'Liu Xiaodong' can't stand in for 'Li Xiaodong' and
-    'Xiao Hui Wang' can't stand in for 'Wang Hui'."""
-    core = re.sub(r"\s*\(.*\)\s*$", "", title)
-    return name_tokens(core) == name_tokens(name)
 
 
 def search_for_designer(wiki, name, discipline):

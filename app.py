@@ -23,24 +23,13 @@ from dotenv import load_dotenv
 
 import fetch_wikipedia as wiki_tools
 from build_db import RAW_DIR, get_collection, upsert_designer
+from names import body, slug
+from ranking import RELATED, idea_verdict, pick_for_question, rank_by_designer
 
 # ---------------------------------------------------------------------------
 # 1. Settings
 # ---------------------------------------------------------------------------
 
-# Chroma's default distance: lower = more similar. Picked by looking at real
-# results: good matches were 1.0-1.3, a nonsense query ("how do I fix a flat
-# bicycle tire") was ~1.7. But unrelated architecture also lands at 1.15-1.35,
-# so a distance alone can't say "strong match". It is used for two things only:
-RELATED = 1.45      # nothing closer than this -> say "no good match"
-CLOSE_BAND = 0.08   # show only designers within this of the best one
-# For ideas ("did someone already do this?") we need to be much stricter.
-# The Napier's-rods idea, which nothing in the library resembles, scored 1.16.
-# Only Wikipedia passages count here: short notes sit closer to short ideas
-# just because both are short (a hotel-lobby note scored 0.89 against an
-# unrelated ceiling idea).
-IDEA_VERY_CLOSE = 0.90
-IDEA_RELATED = 1.10
 # Two of my own ideas: the same idea reworded scored 0.81, two unrelated
 # ideas 1.05.
 SAME_IDEA = 0.90
@@ -91,16 +80,6 @@ def show(text, indent=""):
     for para in str(text).split("\n"):
         print(textwrap.fill(para, width=88, initial_indent=indent,
                             subsequent_indent=indent) if para.strip() else "")
-
-
-def slug(name):
-    plain = unicodedata.normalize("NFKD", name).encode("ascii", "ignore").decode()
-    return re.sub(r"[^a-z0-9]+", "-", plain.lower()).strip("-") or "unnamed"
-
-
-def body(document):
-    """Stored text is 'Designer - Section: text'. Return just the text."""
-    return document.split(": ", 1)[-1]
 
 
 def load_name_list():
@@ -169,24 +148,7 @@ def similar_designers(texts, exclude=(), discipline=None, section=None,
     where = filters[0] if len(filters) == 1 else {"$and": filters}
     res = collection.query(query_texts=texts, n_results=per_text, where=where)
 
-    hits = {}  # designer_id -> list of (distance, document, metadata, query)
-    for qi, query in enumerate(texts):
-        for doc, meta, dist in zip(res["documents"][qi], res["metadatas"][qi],
-                                   res["distances"][qi]):
-            hits.setdefault(meta["designer_id"], []).append((dist, doc, meta, query))
-
-    ranked = []
-    for designer_id, found in hits.items():
-        found.sort(key=lambda h: h[0])
-        score = found[0][0]  # a designer's best-matching chunk
-        name = found[0][2]["name_en"]
-        if designer_id == "unassigned":
-            name = "Your note"
-        ranked.append({"id": designer_id, "name": name,
-                       "discipline": found[0][2].get("discipline", ""),
-                       "score": score, "hits": found[:2]})
-    ranked.sort(key=lambda r: r["score"])
-    return ranked[:top]
+    return rank_by_designer(texts, res, top)
 
 
 def print_ranking(ranked):
@@ -404,12 +366,11 @@ def add_idea():
         print()
         show(answer, indent="  ")
         return
-    published = [r["score"] for r in ranked if r["hits"][0][2]["source"] == "wikipedia"]
-    best = min(published) if published else 9
+    verdict = idea_verdict(ranked)
     print("\n  (No language model: rough verdict from distance only.)")
-    if best < IDEA_VERY_CLOSE:
+    if verdict == "very close":
         print("  -> Very close to existing work. Look at it before you go further.")
-    elif best < IDEA_RELATED:
+    elif verdict == "related":
         print("  -> Related work exists; worth knowing how yours differs.")
     else:
         print("  -> Nothing obviously close in your library.")
@@ -422,22 +383,7 @@ def ask_question():
         return
     d = ask("Only one discipline? [a/i/g/p/o, Enter for all]: ").strip().lower()[:1]
     ranked = similar_designers([question], discipline=DISCIPLINES.get(d), top=6)
-    # My own notes are short, so they score closer than Wikipedia passages
-    # (a note scored 1.00 against a matching question, the best Wikipedia
-    # passage 1.21). If the band were measured from the note, every designer
-    # would be cut and the brief would have nothing to say. So notes and
-    # Wikipedia are filtered separately.
-    own = [r for r in ranked if r["hits"][0][2]["source"] == "mine"]
-    published = [r for r in ranked if r["hits"][0][2]["source"] != "mine"]
-    if published:
-        # Keep only designers about as close as the best one. Further down the
-        # list the matches were mostly generic (I. M. Pei for "dirt raised into
-        # rooms", because his excerpt mentioned building workers).
-        best = published[0]["score"]
-        published = [r for r in published if r["score"] < RELATED
-                     and r["score"] <= best + CLOSE_BAND][:4]
-    own = [r for r in own if r["score"] < RELATED][:2]
-    ranked = sorted(published + own, key=lambda r: r["score"])
+    ranked = pick_for_question(ranked)
     if not ranked:
         print(f"Nothing in the library is closer than {RELATED}. "
               "Try describing it differently, or add notes on designers you know.")

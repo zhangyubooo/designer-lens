@@ -19,81 +19,17 @@ import time
 
 import chromadb
 
+from text_rules import MAX_WORDS, chunk_text, keep_section
+
 RAW_DIR = os.path.join("data", "raw")
 DB_PATH = "./chroma_store"
 COLLECTION = "designers"
-MAX_WORDS = 150
 BATCH = 200  # chunks per upsert call: one big call is much faster than many small ones
-
-
-# Sections about a designer's life or fame, not how they design.
-# Step 5 showed these crowding real answers (e.g. a bibliography matching
-# "temporary shelters"; Noguchi "matching" Gehry through their Exhibitions
-# sections). Only the last part of a title like
-# "Works and publications > Fashion" is checked, so "Fashion" is kept.
-SKIP_SECTION = re.compile(
-    r"award|honou?r|recognition|personal life|^death$|works about|"
-    r"bibliography|publications|writings|filmography|archives|exhibition", re.I)
-
-
-def looks_like_a_list(text):
-    """'Hanselmann House, Fort Wayne, Indiana, 1968' one per line: a list of
-    names, not a description. Wikipedia prose comes as long paragraphs, so
-    if most lines are short, it's a list."""
-    lines = [ln for ln in text.splitlines() if ln.strip()]
-    if len(lines) < 4:
-        return False
-    short = sum(1 for ln in lines if len(ln.split()) < 25)
-    return short / len(lines) >= 0.6
-
-
-def keep_section(section):
-    title = section["section"].split(" > ")[-1]
-    if SKIP_SECTION.search(title):
-        return False
-    if "quot" in title.lower():  # a designer's own words: short lines, but gold
-        return True
-    return not looks_like_a_list(section["text"])
 
 
 def get_collection():
     client = chromadb.PersistentClient(path=DB_PATH)
     return client.get_or_create_collection(name=COLLECTION)
-
-
-def split_long(text, max_words=MAX_WORDS):
-    """Split one paragraph that is too long, at sentence ends."""
-    sentences = re.split(r"(?<=[.!?])\s+", text)
-    pieces, current = [], []
-    for s in sentences:
-        if current and len(" ".join(current + [s]).split()) > max_words:
-            pieces.append(" ".join(current))
-            current = []
-        current.append(s)
-    if current:
-        pieces.append(" ".join(current))
-    return pieces
-
-
-def chunk_text(text, max_words=MAX_WORDS):
-    """Pack whole paragraphs together until the next one would go over the
-    limit, so a chunk usually ends where the author ended a thought."""
-    paragraphs = []
-    for p in text.split("\n"):
-        p = p.strip()
-        if not p:
-            continue
-        paragraphs.extend(split_long(p) if len(p.split()) > max_words else [p])
-
-    chunks, current = [], []
-    for p in paragraphs:
-        if current and len(" ".join(current + [p]).split()) > max_words:
-            chunks.append(" ".join(current))
-            current = []
-        current.append(p)
-    if current:
-        chunks.append(" ".join(current))
-    return chunks
 
 
 def chunks_for_designer(record):
