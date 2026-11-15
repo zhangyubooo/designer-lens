@@ -4,6 +4,7 @@ Moved here unchanged from fetch_wikipedia.py (name_tokens, title_matches)
 and app.py (slug, body) for the testing assignment, Step 2.
 """
 
+import hashlib
 import re
 import unicodedata
 
@@ -28,7 +29,16 @@ def title_matches(title, name):
 
 def slug(name):
     plain = unicodedata.normalize("NFKD", name).encode("ascii", "ignore").decode()
-    return re.sub(r"[^a-z0-9]+", "-", plain.lower()).strip("-") or "unnamed"
+    ascii_slug = re.sub(r"[^a-z0-9]+", "-", plain.lower()).strip("-")
+    if ascii_slug:
+        return ascii_slug
+    # No ASCII letters or digits left (e.g. a Chinese name). Hash the whole
+    # name so different names still get different ids; the same name always
+    # gets the same id.
+    stripped = name.strip()
+    if any(ch.isalnum() for ch in stripped):
+        return "u-" + hashlib.sha1(stripped.encode("utf-8")).hexdigest()[:12]
+    return "unnamed"
 
 
 def body(document):
