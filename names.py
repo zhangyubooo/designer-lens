@@ -4,6 +4,7 @@ Moved here unchanged from fetch_wikipedia.py (name_tokens, title_matches)
 and app.py (slug, body) for the testing assignment, Step 2.
 """
 
+import hashlib
 import re
 import unicodedata
 
@@ -28,7 +29,15 @@ def title_matches(title, name):
 
 def slug(name):
     plain = unicodedata.normalize("NFKD", name).encode("ascii", "ignore").decode()
-    return re.sub(r"[^a-z0-9]+", "-", plain.lower()).strip("-") or "unnamed"
+    result = re.sub(r"[^a-z0-9]+", "-", plain.lower()).strip("-")
+    if result:
+        return result
+    # Nothing survived ASCII conversion (e.g. a Chinese name). If the name has
+    # real letters, give it a stable id derived from the name so different
+    # names don't collide.
+    if any(c.isalnum() for c in name):
+        return "n-" + hashlib.sha1(name.strip().encode("utf-8")).hexdigest()[:10]
+    return "unnamed"
 
 
 def body(document):
